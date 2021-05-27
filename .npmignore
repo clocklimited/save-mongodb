@@ -2,3 +2,9 @@ test/
 example/
 .nyc_output/
 yarn-error.log
+.eslintignore
+.eslintrc
+.jsinspectrc
+.prettierignore
+.prettierrc
+.travis.yml
