@@ -1,6 +1,6 @@
 {
   "author": "Paul Serby <paul@serby.net>",
-  "name": "save-mongodb",
+  "name": "@clocklimited/save-mongodb",
   "description": "mongodb persistence engine for save",
   "version": "3.0.1",
   "tags": [
@@ -8,9 +8,6 @@
     "save",
     "persistence"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:clocklimited/save-mongodb.git"
