@@ -66,7 +66,7 @@ contactStore.find({})
 ## Credits
 
 [Paul Serby](https://github.com/serby/) follow me on twitter [@serby](http://twitter.com/serby)
-[Clock Limited](https://github.com/clocklimited/) follow us on twitter [@serby](http://twitter.com/clock)
+[Clock Limited](https://github.com/clocklimited/) follow us on twitter [@clock](http://twitter.com/clock)
 
 ## Licence
 
