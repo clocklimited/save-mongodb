@@ -1,18 +1,12 @@
-var Db = require('mongodb').Db // npm install mongodb
-var Server = require('mongodb').Server
+var MongoClient = require('mongodb').MongoClient // npm install mongodb
 var save = require('save') // npm install save
 var saveMongodb = require('..')
 var es = require('event-stream')
-// Create a db object to a local mongodb database called SimpleExample.
-var db = new Db('test', new Server('127.0.0.1', 27017, {}), {
-  fsync: true,
-  w: 1
-})
 
-// Open your mongodb database.
-db.open(function(error, connection) {
+// connect to your mongodb database.
+MongoClient.connect('mongodb://localhost:27017/', function(error, client) {
   if (error) return console.error(error.message)
-
+  var connection = client.db('test')
   // Get a collection. This will create the collection if it doesn't exist.
   connection.collection('contact', function(error, collection) {
     if (error) return console.error(error.message)
@@ -21,8 +15,14 @@ db.open(function(error, connection) {
     var contactStore = save('Contact', { engine: saveMongodb(collection) })
 
     // Then we can create a new object.
-    contactStore.create({ name: 'Paul', email: 'paul@serby.net' }, function() {
+    contactStore.create({ name: 'Paul', email: 'paul@serby.net' }, function(
+      error,
+      contact
+    ) {
       if (error) return console.error(error.message)
+
+      // The created 'contact' is returned and has been given an _id
+      console.log(contact)
 
       contactStore
         .find({})
@@ -33,7 +33,8 @@ db.open(function(error, connection) {
           })
         )
         .on('end', function() {
-          connection.close()
+          // Don't forget to close your database connection!
+          client.close()
         })
     })
   })

@@ -14,7 +14,7 @@ function getEngine(options, callback) {
     callback = options
     options = {}
   }
-  collection.removeMany({}, { j: true, w: 1 }, function(error) {
+  collection.deleteMany({}, function(error) {
     if (error) {
       console.error('GetEngine', error)
       return callback(error)
@@ -34,20 +34,13 @@ function getEngine(options, callback) {
 }
 
 function connect(done) {
-  MongoClient.connect(
-    'mongodb://localhost:27017/test',
-    { native_parser: true },
-    function(err, client) {
-      mongoClient = client
-      connection = client.db('test')
-      if (err) return done(err)
-      connection.collection('test', function(err, c) {
-        if (err) return done(err)
-        collection = c
-        done()
-      })
-    }
-  )
+  MongoClient.connect('mongodb://localhost:27017/test', function(err, client) {
+    if (err) return done(err)
+    mongoClient = client
+    connection = client.db('test')
+    collection = connection.collection('test')
+    done()
+  })
 }
 
 function drop(done) {
