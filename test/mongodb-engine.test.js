@@ -14,7 +14,7 @@ function getEngine(options, callback) {
     callback = options
     options = {}
   }
-  collection.removeMany({}, { j: true, w: 1 }, function(error) {
+  collection.removeMany({}, {}, function(error) {
     if (error) {
       console.error('GetEngine', error)
       return callback(error)
