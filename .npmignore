@@ -7,5 +7,5 @@ yarn-error.log
 .jsinspectrc
 .prettierignore
 .prettierrc
-.travis.yml
+.circleci/
 .editorconfig

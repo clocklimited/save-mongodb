@@ -1,0 +1,41 @@
+version: 2
+
+jobs:
+  build:
+    name: 'Test'
+    docker:
+      - image: circleci/node:16
+      - image: mongo:4.2.0
+    resource_class: small
+    working_directory: ~/save-mongodb
+    parallelism: 4
+    steps:
+      - run:
+          name: Waiting for MongoDB
+          command: dockerize -wait tcp://localhost:27017 -timeout 1m
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Switch Node Version
+          command: |
+            wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            . "$NVM_DIR/nvm.sh" --install
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV;
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV;
+            case $CIRCLE_NODE_INDEX in \
+              0) NODE_VERSION=12 ;; \
+              1) NODE_VERSION=14 ;; \
+              2) NODE_VERSION=16 ;; \
+              3) NODE_VERSION=18 ;; \
+            esac;
+            nvm install $NODE_VERSION && nvm alias default $NODE_VERSION
+      - run:
+          name: Print Versions
+          command: |
+            node --version
+            npm --version
+      - run: |
+          yarn install
+          yarn add mongodb@^3
+      - run: yarn test

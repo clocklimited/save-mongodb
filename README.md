@@ -1,5 +1,7 @@
 # @clocklimited/save-mongodb - mongodb persistence engine for **save**
 
+[![CircleCI](https://circleci.com/gh/clocklimited/save-mongodb/tree/master.svg?style=svg)](https://circleci.com/gh/clocklimited/save-mongodb/tree/master)
+
 ## Installation
 
 ```
