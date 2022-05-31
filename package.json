@@ -45,6 +45,6 @@
     "stream-assert": "^2.0.3"
   },
   "peerDependencies": {
-    "mongodb": "~3"
+    "mongodb": "~4"
   }
 }
