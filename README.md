@@ -16,34 +16,34 @@ npm install mongodb@^4
 If you want to see how this works look at the tests or this simple example:
 
 ```js
-// What you'll need!
-var Db = require('mongodb').Db // npm install mongodb
-  , Server = require('mongodb').Server
-  , save = require('save') // npm install save
-  , saveMongodb = require('@clocklimited/save-mongodb')
+var MongoClient = require('mongodb').MongoClient // npm install mongodb
+var save = require('save') // npm install save
+var saveMongodb = require('@clocklimited/save-mongodb')
 
-  // Create a db object to a local mongodb database called SimpleExample.
-  , db = new Db('SimpleExample', new Server('localhost', 27017, {}))
-
-// Open your mongodb database.
-db.open(function (error, connection) {
-
+// connect to your mongodb database.
+MongoClient.connect('mongodb://localhost:27017/', function(error, client) {
+  if (error) return console.error(error.message)
+  var connection = client.db('test')
   // Get a collection. This will create the collection if it doesn't exist.
-  connection.collection('contact', function (error, collection) {
+  connection.collection('contact', function(error, collection) {
+    if (error) return console.error(error.message)
 
     // Create a save object and pass in a mongodb engine.
     var contactStore = save('Contact', { engine: saveMongodb(collection) })
 
     // Then we can create a new object.
-    contactStore.create({ name: 'Paul', email: 'paul@serby.net'}, function (error, contact) {
+    contactStore.create({ name: 'Paul', email: 'paul@serby.net' }, function(
+      error,
+      contact
+    ) {
+      if (error) return console.error(error.message)
 
       // The created 'contact' is returned and has been given an _id
       console.log(contact)
 
       // Don't forget to close your database connection!
-      connection.close()
+      client.close()
     })
-
   })
 })
 ```
@@ -55,7 +55,7 @@ Find now has a streaming interface
 ```js
 
 var contactStore = save('Contact', { engine: saveMongodb(collection) })
-  , es = require('event-stream')
+var es = require('event-stream')
 
 contactStore.find({})
   .pipe(es.stringify())

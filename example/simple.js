@@ -1,18 +1,11 @@
-var Db = require('mongodb').Db // npm install mongodb
-var Server = require('mongodb').Server
+var MongoClient = require('mongodb').MongoClient // npm install mongodb
 var save = require('save') // npm install save
 var saveMongodb = require('..')
 
-// Create a db object to a local mongodb database called SimpleExample.
-var db = new Db('test', new Server('127.0.0.1', 27017, {}), {
-  fsync: true,
-  w: 1
-})
-
-// Open your mongodb database.
-db.open(function(error, connection) {
+// connect to your mongodb database.
+MongoClient.connect('mongodb://localhost:27017/', function(error, client) {
   if (error) return console.error(error.message)
-
+  var connection = client.db('test')
   // Get a collection. This will create the collection if it doesn't exist.
   connection.collection('contact', function(error, collection) {
     if (error) return console.error(error.message)
@@ -31,7 +24,7 @@ db.open(function(error, connection) {
       console.log(contact)
 
       // Don't forget to close your database connection!
-      connection.close()
+      client.close()
     })
   })
 })
