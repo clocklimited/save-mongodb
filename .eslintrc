@@ -1,5 +1,5 @@
 {
-  "extends": [ "standard", "plugin:prettier/recommended", "prettier/standard" ],
+  "extends": [ "eslint:recommended", "plugin:prettier/recommended", "plugin:node/recommended" ],
   "env": {
     "es6": true,
     "node": true,
