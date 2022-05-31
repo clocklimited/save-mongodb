@@ -63,10 +63,6 @@ contactStore.find({})
 
 ```
 
-## Development
-
-To contribute changes to this module, you will need to install `monogdb` in this directory - but do not commit the changes to package.json or yarn.lock. It needs to remain a peer dependency.
-
 ## Credits
 
 [Paul Serby](https://github.com/serby/) follow me on twitter [@serby](http://twitter.com/serby)
