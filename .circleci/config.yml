@@ -35,7 +35,5 @@ jobs:
           command: |
             node --version
             npm --version
-      - run: |
-          yarn install
-          yarn add mongodb@^3
+      - run: yarn install
       - run: yarn test
