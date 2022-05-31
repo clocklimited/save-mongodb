@@ -1,19 +1,24 @@
-# save-mongodb - mongodb persistence engine for **save**
+# @clocklimited/save-mongodb - mongodb persistence engine for **save**
 
 ## Installation
 
-      npm install save-mongodb
+```
+npm install @clocklimited/save-mongodb
+
+// There is a peer dependency of mongodb - you have to bring your own!
+npm install mongodb@^4
+```
 
 ## Usage
 
-I won't bore your with waffle. If you want to see how this works look at the tests or this simple example:
+If you want to see how this works look at the tests or this simple example:
 
 ```js
 // What you'll need!
 var Db = require('mongodb').Db // npm install mongodb
   , Server = require('mongodb').Server
   , save = require('save') // npm install save
-  , saveMongodb = require('..')
+  , saveMongodb = require('@clocklimited/save-mongodb')
 
   // Create a db object to a local mongodb database called SimpleExample.
   , db = new Db('SimpleExample', new Server('localhost', 27017, {}))
@@ -57,7 +62,10 @@ contactStore.find({})
 ```
 
 ## Credits
+
 [Paul Serby](https://github.com/serby/) follow me on twitter [@serby](http://twitter.com/serby)
+[Clock Limited](https://github.com/clocklimited/) follow us on twitter [@serby](http://twitter.com/clock)
 
 ## Licence
+
 Licenced under the [New BSD License](http://opensource.org/licenses/bsd-license.php)
