@@ -2,9 +2,9 @@ const idProperty = '_id'
 const MongoClient = require('mongodb').MongoClient
 const assert = require('assert')
 const Stream = require('stream').Stream
-const mapSeries = require('async').mapSeries // This is callback-based, fine as is
+const mapSeries = require('async').mapSeries
 const streamAssert = require('stream-assert')
-const engine = require('../lib/mongodb-engine') // Your updated engine
+const engine = require('../lib/mongodb-engine')
 
 let connection
 let collection
@@ -48,7 +48,7 @@ async function getEngine(options, callback) {
 
 async function connect(done) {
   try {
-    const client = await MongoClient.connect('mongodb://localhost:27019/test')
+    const client = await MongoClient.connect('mongodb://localhost:27017/test')
     mongoClient = client
     connection = client.db('test')
     collection = connection.collection('test')
