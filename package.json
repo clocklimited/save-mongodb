@@ -2,7 +2,7 @@
   "author": "Paul Serby <paul@serby.net>",
   "name": "@clocklimited/save-mongodb",
   "description": "mongodb persistence engine for save",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "tags": [
     "database",
     "save",
@@ -27,7 +27,7 @@
     "posttest": "(nyc check-coverage --statements 85 --branches 75 --functions 90 --lines 90 && rm -rf coverage) || nyc report --reporter=html && echo Look at 'coverage/index.html' to find out more"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=18"
   },
   "dependencies": {
     "event-stream": "^4.0.1",
@@ -41,7 +41,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jsinspect": "^0.12.6",
     "mocha": "^6.2.0",
-    "mongodb": "^4.6.0",
+    "mongodb": "~6.16.0",
     "nyc": "^14.1.1",
     "prettier": "^1.18.2",
     "save": "^2.4.0",

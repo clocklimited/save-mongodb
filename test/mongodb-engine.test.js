@@ -1,53 +1,75 @@
-var idProperty = '_id'
-var MongoClient = require('mongodb').MongoClient
-var assert = require('assert')
-var Stream = require('stream').Stream
-var mapSeries = require('async').mapSeries
-var streamAssert = require('stream-assert')
-var engine = require('../lib/mongodb-engine')
-var connection
-var collection
-var mongoClient
+const idProperty = '_id'
+const MongoClient = require('mongodb').MongoClient
+const assert = require('assert')
+const Stream = require('stream').Stream
+const mapSeries = require('async').mapSeries // This is callback-based, fine as is
+const streamAssert = require('stream-assert')
+const engine = require('../lib/mongodb-engine') // Your updated engine
 
-function getEngine(options, callback) {
+let connection
+let collection
+let mongoClient
+
+async function getEngine(options, callback) {
   if (callback === undefined) {
     callback = options
     options = {}
   }
-  collection.deleteMany({}, function(error) {
-    if (error) {
-      console.error('GetEngine', error)
-      return callback(error)
+
+  try {
+    if (!collection) {
+      throw new Error(
+        'MongoDB collection not initialized. Check connect() function.'
+      )
     }
-    collection.countDocuments({}, function(error, results) {
-      if (error) {
-        console.error('GetEngine', error)
-        return callback(error)
+
+    try {
+      await collection.drop()
+      collection = connection.collection('test')
+    } catch (dropError) {
+      if (dropError.codeName !== 'NamespaceNotFound') {
+        throw dropError
       }
-      if (results.length > 0) {
-        console.error('GetEngine Check Empty Collection', error)
-        return console.log(results)
-      }
-      callback(null, engine(collection, options))
-    })
-  })
+    }
+
+    const results = await collection.countDocuments({})
+
+    if (results > 0) {
+      const errorMessage = `Collection not empty after drop/re-init, count: ${results}`
+      console.error('GetEngine Check Empty Collection:', errorMessage)
+      return callback(new Error(errorMessage))
+    }
+    callback(null, engine(collection, options))
+  } catch (error) {
+    console.error('GetEngine Error:', error)
+    callback(error)
+  }
 }
 
-function connect(done) {
-  MongoClient.connect('mongodb://localhost:27017/test', function(err, client) {
-    if (err) return done(err)
+async function connect(done) {
+  try {
+    const client = await MongoClient.connect('mongodb://localhost:27019/test')
     mongoClient = client
     connection = client.db('test')
     collection = connection.collection('test')
     done()
-  })
+  } catch (err) {
+    done(err)
+  }
 }
 
-function drop(done) {
-  connection.dropDatabase(function(err) {
-    if (err) return done(err)
-    mongoClient.close(done)
-  })
+async function drop() {
+  try {
+    if (connection) {
+      await connection.dropDatabase()
+    }
+    if (mongoClient) {
+      await mongoClient.close()
+    }
+    return Promise.resolve()
+  } catch (err) {
+    return Promise.reject(err)
+  }
 }
 
 require('save/test/engine.tests')(idProperty, getEngine, connect)
@@ -63,7 +85,7 @@ describe('mongodb-engine', function() {
         documents
       ) {
         if (err) return done(err)
-        var query = {}
+        const query = {}
         query[idProperty] = {
           $in: [documents[0][idProperty], documents[1][idProperty]]
         }
@@ -81,7 +103,7 @@ describe('mongodb-engine', function() {
       if (err) return done(err)
       mapSeries([{ a: 1 }, { a: 2 }], engine.create, function(err, documents) {
         if (err) return done(err)
-        var query = {}
+        const query = {}
         query[idProperty] = { $nin: [documents[0][idProperty]] }
         engine.find(query, function(err, queryResults) {
           if (err) return done(err)
@@ -101,7 +123,7 @@ describe('mongodb-engine', function() {
       if (err) return done(err)
       mapSeries([{ a: 1 }, { a: 2 }], engine.create, function(err, documents) {
         if (err) return done(err)
-        var query = {}
+        const query = {}
         query[idProperty] = { $ne: documents[0][idProperty] }
         engine.find(query, function(err, queryResults) {
           if (err) return done(err)
@@ -121,11 +143,11 @@ describe('mongodb-engine', function() {
       if (err) return done(err)
       engine.create({ a: 1 }, function(err, saved) {
         if (err) return done(err)
-        engine.update({ _id: saved._id }, false, function(err) {
+        engine.update({ _id: saved._id, b: 2 }, false, function(err) {
           assert.strictEqual(
-            /No object found with '_id' =/.test(err.message),
+            /No object found with '_id' =/.test(err ? err.message : ''),
             false,
-            'Unexpected error message: ' + err.message
+            'Unexpected error message: ' + (err ? err.message : 'No error')
           )
           done()
         })
@@ -150,7 +172,7 @@ describe('mongodb-engine', function() {
           documents
         ) {
           if (error) return done(error)
-          var stream = engine.find({ b: 0 }, { cheese: 12, sort: { a: 1 } })
+          const stream = engine.find({ b: 0 }, { cheese: 12, sort: { a: 1 } })
           stream
             .pipe(
               streamAssert.first(function(data) {
@@ -172,7 +194,7 @@ describe('mongodb-engine', function() {
         if (err) return done(err)
         mapSeries([{}, {}, {}, {}, {}], engine.create, function(err) {
           if (err) return done(err)
-          var stream = engine.find({})
+          const stream = engine.find({})
           setTimeout(function() {
             stream.pipe(streamAssert.length(5)).pipe(streamAssert.end(done))
           }, 100)
@@ -188,7 +210,7 @@ describe('mongodb-engine', function() {
         const objects = [{ a: 1 }, { a: 2 }, { a: 3 }]
         mapSeries(objects, engine.create, function(err, documents) {
           if (err) return done(err)
-          var query = {}
+          const query = {}
           query[idProperty] = {
             $in: [
               documents[0][idProperty],
@@ -215,7 +237,7 @@ describe('mongodb-engine', function() {
         ]
         mapSeries(objects, engine.create, function(err, documents) {
           if (err) return done(err)
-          var query = {}
+          const query = {}
           query[idProperty] = {
             $in: [
               documents[0][idProperty],
