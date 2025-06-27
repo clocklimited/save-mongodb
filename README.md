@@ -6,12 +6,12 @@
 npm install @clocklimited/save-mongodb
 
 // There is a peer dependency of mongodb - you have to bring your own!
-npm install mongodb@^8
+npm install mongodb@^6
 ```
 
 ## Usage
 
-Version >=5 is compatible with MongoDB 8.
+Version >=5 of this package is compatible with MongoDB 8.
 
 If you want to see how this works look at the tests or this simple example:
 
